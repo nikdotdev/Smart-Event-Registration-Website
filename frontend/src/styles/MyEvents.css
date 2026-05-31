@@ -1,0 +1,89 @@
+.my-events-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.my-events-container h1 {
+  font-size: 32px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.my-events-hint {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.my-events-hint a {
+  color: var(--brand);
+}
+
+.my-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-event-card {
+  background: var(--bg-surface);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border-light);
+}
+
+.my-event-card h3 {
+  margin: 0 0 8px;
+  color: var(--text-primary);
+}
+
+.my-event-card p {
+  margin: 4px 0;
+  color: var(--text-secondary);
+}
+
+.reg-number code {
+  background: var(--bg-muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.my-event-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.no-events {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-surface);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border-light);
+}
+
+.no-events p {
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.btn-browse {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: var(--brand);
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-browse:hover {
+  background-color: var(--brand-hover);
+}

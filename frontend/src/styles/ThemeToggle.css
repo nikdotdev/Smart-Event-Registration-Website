@@ -1,0 +1,18 @@
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 8px;
+  background: var(--bg-surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 18px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--bg-hover);
+}

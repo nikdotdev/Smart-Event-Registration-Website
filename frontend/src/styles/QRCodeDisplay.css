@@ -1,0 +1,52 @@
+.qr-code-display {
+  padding: 24px;
+  background: var(--bg-surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow);
+  border: 1px solid var(--border-light);
+}
+
+.qr-code-container {
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+html.dark .qr-code-container {
+  background: #ffffff;
+}
+
+.qr-code-display p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.qr-code-display strong {
+  color: var(--text-primary);
+}
+
+.qr-download-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.qr-download-row button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+}
+
+.qr-btn-png {
+  background: var(--brand);
+}
+
+.qr-btn-pdf {
+  background: var(--success);
+}

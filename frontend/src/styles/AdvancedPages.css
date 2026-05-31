@@ -1,0 +1,20 @@
+.advanced-page {
+  min-height: calc(100vh - 80px);
+  background-color: var(--bg-page);
+  padding: 24px;
+  color: var(--text-primary);
+}
+
+.advanced-page-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.advanced-page h1 {
+  color: var(--text-primary);
+}
+
+.advanced-empty-hint {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
