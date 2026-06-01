@@ -7,6 +7,7 @@ import {
 } from "../utils/emailUtil.js";
 import { ensureTicketForRegistration } from "../utils/ticketService.js";
 import Ticket from "../models/Ticket.js";
+import Attendance from "../models/Attendance.js";
 
 const generateRegistrationNumber = () => {
   return (
@@ -47,39 +48,22 @@ export const registerForEvent = async (req, res) => {
         .json({ message: "You are already registered for this event" });
     }
 
-    // Re-activate a cancelled registration (unique index blocks a second document)
-    const cancelledRegistration = await Registration.findOne({
+    // Remove old cancelled record so a fresh registration can be created.
+    // This keeps participant history consistent with "unregister then register again".
+    await Registration.deleteMany({
       userId: req.userId,
       eventId,
       status: "cancelled",
     });
 
-    let registration;
-
-    if (cancelledRegistration) {
-      await Registration.updateOne(
-        { _id: cancelledRegistration._id },
-        {
-          $set: {
-            status: "registered",
-            attendanceStatus: "pending",
-            numberOfSeats,
-            registrationNumber: generateRegistrationNumber(),
-          },
-          $unset: { ticketId: "", qrCode: "", checkInTime: "" },
-        }
-      );
-      registration = await Registration.findById(cancelledRegistration._id);
-    } else {
-      registration = await Registration.create({
-        userId: req.userId,
-        eventId,
-        registrationNumber: generateRegistrationNumber(),
-        numberOfSeats,
-        status: "registered",
-        attendanceStatus: "pending",
-      });
-    }
+    const registration = await Registration.create({
+      userId: req.userId,
+      eventId,
+      registrationNumber: generateRegistrationNumber(),
+      numberOfSeats,
+      status: "registered",
+      attendanceStatus: "pending",
+    });
 
     event.registeredCount += numberOfSeats;
     await event.save();
@@ -204,21 +188,16 @@ export const cancelRegistration = async (req, res) => {
         .json({ message: "Not authorized to cancel this registration" });
     }
 
-    if (registration.status === "cancelled") {
-      return res
-        .status(400)
-        .json({ message: "Registration already cancelled" });
-    }
-
-    registration.status = "cancelled";
+    await Attendance.deleteMany({ registrationId: registration._id });
     await Ticket.deleteMany({ registrationId: registration._id });
-    registration.ticketId = undefined;
-    registration.qrCode = undefined;
-    await registration.save();
+    await Registration.deleteOne({ _id: registration._id });
 
     // Update event registered count
     const event = registration.eventId;
-    event.registeredCount -= registration.numberOfSeats;
+    event.registeredCount = Math.max(
+      0,
+      event.registeredCount - (registration.numberOfSeats || 1)
+    );
     await event.save();
 
     const user = await User.findById(req.userId);
@@ -233,7 +212,7 @@ export const cancelRegistration = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Registration cancelled successfully",
-      registration,
+      registrationId: req.params.id,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,5 +1,7 @@
 import Registration from "../models/Registration.js";
 import Event from "../models/Event.js";
+import Ticket from "../models/Ticket.js";
+import Attendance from "../models/Attendance.js";
 import {
   exportParticipantsToCSV,
   generateEventReport,
@@ -23,7 +25,7 @@ export const getParticipants = async (req, res) => {
     const limitNum = parseInt(limit, 10) || 10;
     const skip = (pageNum - 1) * limitNum;
 
-    let filter = { eventId };
+    let filter = { eventId, status: { $ne: "cancelled" } };
 
     if (search) {
       filter.$or = [
@@ -79,11 +81,15 @@ export const deleteParticipant = async (req, res) => {
         .json({ message: "Not authorized to delete this registration" });
     }
 
-    registration.status = "cancelled";
-    await registration.save();
+    await Attendance.deleteMany({ registrationId: registration._id });
+    await Ticket.deleteMany({ registrationId: registration._id });
+    await Registration.deleteOne({ _id: registration._id });
 
     // Decrease event registered count
-    registration.eventId.registeredCount -= 1;
+    registration.eventId.registeredCount = Math.max(
+      0,
+      registration.eventId.registeredCount - (registration.numberOfSeats || 1)
+    );
     await registration.eventId.save();
 
     res.status(200).json({
@@ -111,7 +117,10 @@ export const exportParticipantsCSV = async (req, res) => {
         .json({ message: "Not authorized to export participants" });
     }
 
-    const registrations = await Registration.find({ eventId }).populate(
+    const registrations = await Registration.find({
+      eventId,
+      status: { $ne: "cancelled" },
+    }).populate(
       "userId"
     );
 
@@ -146,7 +155,10 @@ export const generateEventReportPDF = async (req, res) => {
         .json({ message: "Not authorized to generate report" });
     }
 
-    const registrations = await Registration.find({ eventId }).populate(
+    const registrations = await Registration.find({
+      eventId,
+      status: { $ne: "cancelled" },
+    }).populate(
       "userId"
     );
 
@@ -181,7 +193,10 @@ export const generateParticipantReportPDF = async (req, res) => {
         .json({ message: "Not authorized to generate report" });
     }
 
-    const registrations = await Registration.find({ eventId }).populate(
+    const registrations = await Registration.find({
+      eventId,
+      status: { $ne: "cancelled" },
+    }).populate(
       "userId"
     );
 

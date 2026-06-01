@@ -95,9 +95,7 @@ export const AdminDashboard = () => {
       location: event.location,
       capacity: String(event.capacity),
       image:
-        event.image && !event.image.startsWith("/uploads")
-          ? event.image
-          : "",
+        event.image && !event.image.startsWith("/uploads") ? event.image : "",
       imageFile: null,
     });
     setEditingId(event._id);
