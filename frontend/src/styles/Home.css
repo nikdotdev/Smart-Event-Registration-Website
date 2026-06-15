@@ -1,26 +1,72 @@
 .home-container {
-  max-width: 1400px;
+  max-width: 1450px;
   margin: 0 auto;
+  padding: 40px 20px 80px;
 }
 
+/* ================= HERO ================= */
+
 .hero-section {
+  position: relative;
+  overflow: hidden;
+  padding: 70px 30px;
+  margin-bottom: 45px;
   text-align: center;
-  margin-bottom: 40px;
-  padding: 40px 20px;
-  background: linear-gradient(135deg, var(--hero-start) 0%, var(--hero-end) 100%);
-  color: white;
-  border-radius: 12px;
+  border-radius: 28px;
+  background: radial-gradient(
+    circle at top right,
+    #52525b 0%,
+    #27272a 45%,
+    #18181b 100%
+  );
+  color: #fff;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  top: -120px;
+  right: -120px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hero-section::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  bottom: -90px;
+  left: -60px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .hero-section h1 {
-  font-size: 42px;
-  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
 }
 
 .hero-section p {
-  font-size: 18px;
+  position: relative;
+  z-index: 1;
+  max-width: 650px;
+  margin: auto;
+  font-size: 1.1rem;
   opacity: 0.9;
+  line-height: 1.8;
 }
+
+/* ================= SEARCH ================= */
 
 .search-section {
   margin-bottom: 40px;
@@ -28,95 +74,222 @@
 
 .search-input {
   width: 100%;
-  padding: 14px 20px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
-  background: var(--bg-input);
+  padding: 18px 22px;
+  border-radius: 16px;
+  border: 1px solid #d4d4d8;
+  background: var(--bg-card);
   color: var(--text-primary);
-  transition: border-color 0.3s;
+  font-size: 16px;
+  transition: all .3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,.04);
+}
+
+.search-input::placeholder {
+  color: #71717a;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--brand);
+  border-color: #71717a;
+  box-shadow:
+    0 0 0 4px rgba(113,113,122,.12),
+    0 10px 30px rgba(0,0,0,.08);
+  transform: translateY(-2px);
 }
+
+/* ================= GRID ================= */
 
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+  gap: 30px;
+  margin-bottom: 50px;
 }
 
-.no-events {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-muted);
-  font-size: 18px;
+.events-grid > * {
+  animation: fadeUp .45s ease;
 }
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= LOADING ================= */
+
+.loading {
+  text-align: center;
+  padding: 90px;
+  font-size: 18px;
+  color: #71717a;
+}
+
+/* ================= EMPTY ================= */
+
+.no-events {
+  padding: 80px 20px;
+  text-align: center;
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  background: var(--bg-card);
+  box-shadow: 0 8px 25px rgba(0,0,0,.04);
+}
+
+.no-events p {
+  font-size: 18px;
+  color: #71717a;
+}
+
+/* ================= PAGINATION ================= */
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  margin: 40px 0;
+  gap: 18px;
+  margin-top: 60px;
 }
 
 .pagination button {
-  padding: 10px 20px;
-  background-color: var(--brand);
+  padding: 14px 28px;
+  border-radius: 14px;
+  border: 1px solid #3f3f46;
+  background: linear-gradient(
+    180deg,
+    #3f3f46,
+    #27272a
+  );
   color: white;
-  border-radius: 6px;
+  font-size: 15px;
   font-weight: 600;
-  transition: background-color 0.3s;
+  cursor: pointer;
+  transition: all .3s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,.12);
 }
 
 .pagination button:hover:not(:disabled) {
-  background-color: var(--brand-hover);
+  background: linear-gradient(
+    180deg,
+    #52525b,
+    #3f3f46
+  );
+  transform: translateY(-3px);
+  box-shadow: 0 18px 35px rgba(0,0,0,.18);
+}
+
+.pagination button:active:not(:disabled) {
+  transform: scale(.98);
 }
 
 .pagination button:disabled {
-  background-color: var(--text-muted);
+  background: #d4d4d8;
+  border-color: #d4d4d8;
+  color: #71717a;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .page-info {
-  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid #e4e4e7;
+  background: var(--bg-card);
   color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,.03);
 }
 
-@media (max-width: 768px) {
+/* ================= SCROLLBAR ================= */
+
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a1a1aa;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+
   .hero-section {
-    padding: 30px 15px;
+    padding: 55px 20px;
   }
 
   .hero-section h1 {
-    font-size: 28px;
-  }
-
-  .hero-section p {
-    font-size: 16px;
+    font-size: 2.3rem;
   }
 
   .events-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  }
+
+}
+
+@media (max-width:768px) {
+
+  .home-container {
+    padding: 20px 15px 50px;
+  }
+
+  .hero-section {
+    padding: 45px 20px;
+    border-radius: 22px;
+  }
+
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-section p {
+    font-size: .95rem;
+  }
+
+  .search-input {
+    padding: 16px;
   }
 
   .pagination {
     flex-wrap: wrap;
-    gap: 10px;
   }
+
 }
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
+
   .hero-section h1 {
-    font-size: 24px;
+    font-size: 1.7rem;
   }
 
   .events-grid {
     grid-template-columns: 1fr;
   }
+
+  .pagination button {
+    width: 100%;
+  }
+
+  .page-info {
+    width: 100%;
+    text-align: center;
+  }
+
 }

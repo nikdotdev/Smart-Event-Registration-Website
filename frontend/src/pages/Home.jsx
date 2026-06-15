@@ -51,7 +51,7 @@ export const Home = () => {
   return (
     <div className="home-container">
       <div className="hero-section">
-        <h1>🎉 Discover Amazing Events</h1>
+        <h1>Discover Amazing Events</h1>
         <p>Find and register for events that interest you</p>
       </div>
 
@@ -64,6 +64,7 @@ export const Home = () => {
           className="search-input"
         />
       </div>
+      
 
       {loading ? (
         <div className="loading">Loading events...</div>
