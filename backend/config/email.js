@@ -3,32 +3,21 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const emailConfig = {
-  service: process.env.EMAIL_SERVICE || "gmail",
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
-};
+});
 
-// For Mailtrap or custom SMTP
-if (process.env.SMTP_HOST) {
-  emailConfig.host = process.env.SMTP_HOST;
-  emailConfig.port = process.env.SMTP_PORT || 587;
-  emailConfig.auth = {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  };
-  delete emailConfig.service;
-}
-
-const transporter = nodemailer.createTransport(emailConfig);
-
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("SMTP Verify Error:", error);
+transporter.verify((err) => {
+  if (err) {
+    console.error("SMTP Verify Error:", err);
   } else {
-    console.log("SMTP Server is ready");
+    console.log("SMTP connected successfully");
   }
 });
 
