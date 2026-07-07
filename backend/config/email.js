@@ -24,4 +24,12 @@ if (process.env.SMTP_HOST) {
 
 const transporter = nodemailer.createTransport(emailConfig);
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("SMTP Verify Error:", error);
+  } else {
+    console.log("SMTP Server is ready");
+  }
+});
+
 export default transporter;
