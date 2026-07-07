@@ -78,7 +78,7 @@ app.use("/api/dashboard", dashboardRoutes);
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
+  res.status(404).json({ message: "is this ok?" });
 });
 
 // Error handling middleware
