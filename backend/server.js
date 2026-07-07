@@ -52,7 +52,11 @@ app.use(
 app.use(compression());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [
+      "http://localhost:5173",
+      "https://eventra-swart.vercel.app",
+      "https://eventra-alqkwuvgo-nikhil-thakurs-projects-4dc09f39.vercel.app",
+    ],
     credentials: true,
   })
 );
