@@ -1,13 +1,7 @@
-import transporter from "../config/email.js";
+import resend, { getFromAddress } from "../config/email.js";
 import { generateQRCodeBuffer } from "./qrCodeUtil.js";
 
-const QR_CID = "qr-code-ticket@eventbooking";
-
-const getFromAddress = () =>
-  process.env.EMAIL_USER ||
-  process.env.SMTP_FROM ||
-  process.env.SMTP_USER ||
-  "noreply@eventbooking.com";
+const QR_CID = "ticket-qr-code";
 
 const formatEventDate = (date) =>
   new Date(date).toLocaleString("en-US", {
@@ -18,22 +12,25 @@ const formatEventDate = (date) =>
     minute: "2-digit",
   });
 
-export const sendEmail = async (to, subject, html) => {
-  if (!process.env.EMAIL_USER && !process.env.SMTP_HOST) {
+const getSender = () => getFromAddress();
+
+export const sendEmail = async (to, subject, html, attachments = []) => {
+  if (!process.env.RESEND_API_KEY) {
     console.warn(
-      "Email not configured: set EMAIL_USER + EMAIL_PASSWORD (Gmail) or SMTP_* in backend/.env"
+      "Email not configured: set RESEND_API_KEY in backend/.env or environment variables."
     );
     return null;
   }
 
   try {
-    const info = await transporter.sendMail({
-      from: getFromAddress(),
+    const info = await resend.emails.send({
+      from: getSender(),
       to,
       subject,
       html,
+      attachments,
     });
-    console.log("Email sent:", info.messageId);
+    console.log("Email sent:", info.id || info.messageId || info);
     return info;
   } catch (error) {
     console.error("Error sending email:", error.message);
@@ -99,14 +96,15 @@ export const sendTicketEmail = async (
   ticketNumber,
   qrCodeData
 ) => {
-  if (!process.env.EMAIL_USER && !process.env.SMTP_HOST) {
+  if (!process.env.RESEND_API_KEY) {
     console.warn(
-      "Email not configured: set EMAIL_USER + EMAIL_PASSWORD (Gmail) or SMTP_* in backend/.env"
+      "Email not configured: set RESEND_API_KEY in backend/.env or environment variables."
     );
     return null;
   }
 
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const qrBuffer = await generateQRCodeBuffer(qrCodeData);
 
   const html = `
     <!DOCTYPE html>
@@ -135,31 +133,14 @@ export const sendTicketEmail = async (
     </html>
   `;
 
-  try {
-    const qrBuffer = await generateQRCodeBuffer(qrCodeData);
-
-    const info = await transporter.sendMail({
-      from: getFromAddress(),
-      to: userEmail,
-      subject: `Your Ticket for ${eventName}`,
-      html,
-      attachments: [
-        {
-          filename: "ticket-qrcode.png",
-          content: qrBuffer,
-          cid: QR_CID,
-          contentType: "image/png",
-          contentDisposition: "inline",
-        },
-      ],
-    });
-
-    console.log("Ticket email sent:", info.messageId);
-    return info;
-  } catch (error) {
-    console.error("Error sending ticket email:", error.message);
-    throw error;
-  }
+  return sendEmail(userEmail, `Your Ticket for ${eventName}`, html, [
+    {
+      filename: "ticket-qrcode.png",
+      content: qrBuffer,
+      content_type: "image/png",
+      content_id: QR_CID,
+    },
+  ]);
 };
 
 export const sendReminderEmail = async (

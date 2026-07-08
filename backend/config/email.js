@@ -1,24 +1,17 @@
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { Resend } from "resend";
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+if (!process.env.RESEND_API_KEY) {
+  console.warn(
+    "Resend API key not found. Set RESEND_API_KEY in backend/.env or environment."
+  );
+}
 
-transporter.verify((err) => {
-  if (err) {
-    console.error("SMTP Verify Error:", err);
-  } else {
-    console.log("SMTP connected successfully");
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default transporter;
+export const getFromAddress = () =>
+  process.env.EMAIL_FROM || process.env.EMAIL_USER || "onboarding@resend.dev";
+
+export default resend;
