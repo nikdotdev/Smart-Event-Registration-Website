@@ -6,10 +6,17 @@ import {
   getEventRegistrations,
 } from "../controllers/registrationController.js";
 import { authMiddleware, roleMiddleware } from "../middleware/auth.js";
+import { eventRegistrationLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-router.post("/:id/register", authMiddleware, registerForEvent);
+// Throttle event registrations per IP to avoid spam and bot registrations.
+router.post(
+  "/:id/register",
+  authMiddleware,
+  eventRegistrationLimiter,
+  registerForEvent
+);
 router.delete("/:id/cancel", authMiddleware, cancelRegistration);
 router.get(
   "/event/:id",

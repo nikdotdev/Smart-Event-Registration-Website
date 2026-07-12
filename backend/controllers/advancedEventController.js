@@ -1,10 +1,19 @@
 import Event from "../models/Event.js";
 import Registration from "../models/Registration.js";
+import { deleteCachedValue } from "../middleware/cache.js";
 
 export const createEvent = async (req, res) => {
   try {
-    const { name, description, category, date, location, capacity, tags, image } =
-      req.body;
+    const {
+      name,
+      description,
+      category,
+      date,
+      location,
+      capacity,
+      tags,
+      image,
+    } = req.body;
 
     if (!name || !description || !date || !location || !capacity) {
       return res
@@ -33,6 +42,9 @@ export const createEvent = async (req, res) => {
     }
 
     const event = await Event.create(eventPayload);
+
+    // Invalidate the shared list cache whenever a new event is created.
+    await deleteCachedValue("events:all");
 
     res.status(201).json({
       success: true,
@@ -176,11 +188,19 @@ export const updateEvent = async (req, res) => {
 
     if (req.file) {
       event.image = `/uploads/events/${req.file.filename}`;
-    } else if (req.body.image && typeof req.body.image === "string" && req.body.image.trim()) {
+    } else if (
+      req.body.image &&
+      typeof req.body.image === "string" &&
+      req.body.image.trim()
+    ) {
       event.image = req.body.image.trim();
     }
 
     await event.save();
+
+    // Keep the list and this event's detail cache fresh after updates.
+    await deleteCachedValue("events:all");
+    await deleteCachedValue(`event:${req.params.id}`);
 
     res.status(200).json({
       success: true,
@@ -207,6 +227,10 @@ export const deleteEvent = async (req, res) => {
 
     await Event.findByIdAndDelete(req.params.id);
     await Registration.deleteMany({ eventId: req.params.id });
+
+    // Remove the cached list and the removed event's detail entry.
+    await deleteCachedValue("events:all");
+    await deleteCachedValue(`event:${req.params.id}`);
 
     res.status(200).json({
       success: true,

@@ -9,13 +9,14 @@ import {
   uploadUserAvatar,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/advancedAuth.js";
+import { loginLimiter, registerLimiter } from "../middleware/rateLimiter.js";
 import { uploadAvatar } from "../utils/uploadUtil.js";
 
 const router = express.Router();
 
 // Auth routes
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", registerLimiter, registerUser);
+router.post("/login", loginLimiter, loginUser);
 
 // Protected routes
 router.get("/me", protect, getMe);
